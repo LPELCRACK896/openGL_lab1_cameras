@@ -4,7 +4,20 @@ from pygame.locals import *
 from shaders import *
 
 from gl import Renderer, Model
+""" 
+PARA GIRAR LA CAMARA SE UTILIZA LAS TECLAS 
+    W
+  A S D
 
+Para acer zoom in se utiliza la tecla 
+
+ O
+
+Para hacer zoom out se utiliza la tecla:
+
+p
+
+ """
 width = 960
 height = 540
 
