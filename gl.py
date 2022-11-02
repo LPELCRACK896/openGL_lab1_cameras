@@ -1,6 +1,6 @@
 import glm #pip install PyGLM
 
-from numpy import array, float32
+from numpy import array, float32, pi, sin, cos
 
 # pip install PyOpenGL
 from OpenGL.GL import *
@@ -175,6 +175,11 @@ class Renderer(object):
 
         self.value = 0
 
+        self.target = glm.vec3(0, 0, 0)
+        self.angleAlfa = 0
+        self.angleBeta = 0
+        self.camDistance = 5
+
         # ViewMatrix
         self.camPosition = glm.vec3(0,0,0)
         self.camRotation = glm.vec3(0,0,0)
@@ -186,6 +191,35 @@ class Renderer(object):
                                                 0.1,                    # Near Plane
                                                 1000)                   # Far Plane
         
+
+    def setupCameraToRotate(self, TargetModel: Model, radio: int):
+        self.camPosition = glm.vec3(TargetModel.position.x, TargetModel.position.y, TargetModel.position.z+radio)
+        self.target = TargetModel.position
+        self.camDistance = radio
+
+    def rotateHorizontal(self, escala):
+        self.angleAlfa = (self.angleAlfa+escala)%360
+        self.camPosition.x  = self.target.x + self.camDistance*sin(self.angleAlfa*pi/180)
+        self.camPosition.z  = self.target.z + self.camDistance*cos(self.angleAlfa*pi/180)
+
+    def rotateRight(self):
+        self.rotateHorizontal(5)
+    
+    def rotateLeft(self):
+        self.rotateHorizontal(-5)
+        
+    def rotateVertical(self, escala):
+        self.angleBeta = (self.angleBeta+escala)%360
+        self.camPosition.y  = self.target.y + self.camDistance*sin(self.angleBeta*pi/180)
+        self.camPosition.z  = self.target.z + self.camDistance*cos(self.angleBeta*pi/180)
+
+    def rotateUp(self):
+        self.rotateVertical(5)
+    
+    def rotateDown(self):
+        self.rotateVertical(-5)
+
+
     def filledMode(self):
         glPolygonMode(GL_FRONT, GL_FILL)
 
@@ -216,7 +250,7 @@ class Renderer(object):
             self.active_shader = None
 
     def update(self):
-        self.viewMatrix = self.getViewMatrix()
+        self.viewMatrix = glm.lookAt(self.camPosition, self.target, glm.vec3(0, 1, 0))
 
     def render(self):
         glClearColor(0.2,0.2,0.2, 1)

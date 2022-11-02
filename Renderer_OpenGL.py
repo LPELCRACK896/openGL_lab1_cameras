@@ -21,13 +21,14 @@ rend.setShaders(vertex_shader, fragment_shader)
 
 face = Model("model.obj", 'model.bmp')
 
-face.position.z -= 5
+face.position.z = -5
 
 rend.scene.append( face )
 
+rend.setupCameraToRotate(face, 5)
 
 isRunning = True
-
+print(rend.camPosition)
 while isRunning:
 
     keys = pygame.key.get_pressed()
@@ -60,7 +61,14 @@ while isRunning:
         rend.pointLight.y += 10 * deltaTime
     elif keys[K_k]:
         rend.pointLight.y -= 10 * deltaTime
-
+    elif keys[K_a]:
+        rend.rotateLeft()
+    elif keys[K_d]:
+        rend.rotateRight()
+    elif keys[K_w]:
+        rend.rotateUp()
+    elif keys[K_s]:
+        rend.rotateDown()
     deltaTime = clock.tick(60) / 1000
     rend.time += deltaTime
     #print(deltaTime)
