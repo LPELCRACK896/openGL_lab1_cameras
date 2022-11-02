@@ -169,6 +169,12 @@ class Renderer(object):
         self.scene = []
         self.active_shader = None
 
+        self.pointLight = glm.vec3(0,0,0)
+
+        self.time = 0
+
+        self.value = 0
+
         # ViewMatrix
         self.camPosition = glm.vec3(0,0,0)
         self.camRotation = glm.vec3(0,0,0)
@@ -226,7 +232,10 @@ class Renderer(object):
                                 1, GL_FALSE, glm.value_ptr(self.projectionMatrix))
 
             glUniform1i( glGetUniformLocation(self.active_shader, 'tex'), 0)
+            
+            glUniform1f( glGetUniformLocation(self.active_shader, 'time'), self.time)
 
+            glUniform3fv(glGetUniformLocation(self.active_shader, 'pointLight'), 1, glm.value_ptr(self.pointLight))
 
         for obj in self.scene:
             if self.active_shader is not None:

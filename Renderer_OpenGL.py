@@ -39,18 +39,30 @@ while isRunning:
         elif event.type == pygame.KEYDOWN:
             if event.key == pygame.K_ESCAPE:
                 isRunning = False
-            elif event.key == pygame.K_o:
+            elif event.key == pygame.K_1:
                 rend.filledMode()
-            elif event.key == pygame.K_p:
+            elif event.key == pygame.K_2:
                 rend.wireframeMode()
 
     if keys[K_LEFT]:
         rend.camPosition.x -= 10 * deltaTime
-
     elif keys[K_RIGHT]:
         rend.camPosition.x += 10 * deltaTime
+    elif keys[K_UP]:
+        rend.camPosition.y += 10 * deltaTime
+    elif keys[K_DOWN]:
+        rend.camPosition.y -= 10 * deltaTime
+    elif keys[K_j]:
+        rend.pointLight.x -= 10 * deltaTime
+    elif keys[K_l]:
+        rend.pointLight.x += 10 * deltaTime
+    elif keys[K_i]:
+        rend.pointLight.y += 10 * deltaTime
+    elif keys[K_k]:
+        rend.pointLight.y -= 10 * deltaTime
 
     deltaTime = clock.tick(60) / 1000
+    rend.time += deltaTime
     #print(deltaTime)
 
     rend.update()
