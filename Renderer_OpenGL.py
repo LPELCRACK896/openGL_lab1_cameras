@@ -69,6 +69,10 @@ while isRunning:
         rend.rotateUp()
     elif keys[K_s]:
         rend.rotateDown()
+    elif keys[K_o]:
+        rend.zoomIn()
+    elif keys[K_p]:
+        rend.zoomOut()
     deltaTime = clock.tick(60) / 1000
     rend.time += deltaTime
     #print(deltaTime)

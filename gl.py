@@ -1,5 +1,4 @@
 import glm #pip install PyGLM
-
 from numpy import array, float32, pi, sin, cos
 
 # pip install PyOpenGL
@@ -174,11 +173,14 @@ class Renderer(object):
         self.time = 0
 
         self.value = 0
-
+        #Rotation
         self.target = glm.vec3(0, 0, 0)
         self.angleAlfa = 0
         self.angleBeta = 0
         self.camDistance = 5
+
+        #ZoomInZoomOut
+        self.directionCamToTarget = None
 
         # ViewMatrix
         self.camPosition = glm.vec3(0,0,0)
@@ -191,17 +193,51 @@ class Renderer(object):
                                                 0.1,                    # Near Plane
                                                 1000)                   # Far Plane
         
+    def normalizeVec3(self, vector):
+        magnitude = ((vector.x**2)+(vector.y**2)+(vector.z**2))**0.5
+        return glm.vec3(vector.x/magnitude, vector.y/magnitude, vector.z/magnitude)
+    
+    def setUpZoom(self):
+        self.directionCamToTarget = glm.vec3(self.camPosition.x-self.target.x, self.camPosition.y-self.target.y, self.camPosition.z-self.target.z )
+        
+    def getDistanceToTarget(self, zoom, direction):
+        newCamPosition = glm.vec3(self.camPosition.x+direction*zoom.x, self.camPosition.y+direction*zoom.y, self.camPosition.z+direction*zoom.z)
+        vector = glm.vec3(newCamPosition.x - self.target.x, newCamPosition.y - self.target.y, newCamPosition.z - self.target.z)
+        return ((vector.x**2)+(vector.y**2)+(vector.z**2))**0.5
+
+    def updateCamDistance(self):
+        self.camDistance = ((self.camPosition.x-self.target.x)**2 + (self.camPosition.y-self.target.y)**2 + (self.camPosition.z-self.target.z)**2)**0.5 
+
+    def zoom(self, direction):
+        self.setUpZoom()
+        zoom = self.normalizeVec3(self.directionCamToTarget)
+        distanceToTarget = self.getDistanceToTarget(zoom, direction)
+        limit_down = 1
+        limit_up = 10
+        if distanceToTarget<limit_down:
+            print("Zoom in llega a su limit")
+            return
+        elif distanceToTarget>limit_up:
+            print("Zoom out llega a su limit")
+        else:
+            self.camPosition = glm.vec3(self.camPosition.x+direction*zoom.x, self.camPosition.y+direction*zoom.y, self.camPosition.z+direction*zoom.z)
+            self.updateCamDistance()
+    def zoomIn(self):
+        self.zoom(-1)
+
+    def zoomOut(self):
+        self.zoom(1)
 
     def setupCameraToRotate(self, TargetModel: Model, radio: int):
         self.camPosition = glm.vec3(TargetModel.position.x, TargetModel.position.y, TargetModel.position.z+radio)
         self.target = TargetModel.position
         self.camDistance = radio
-
+    
     def rotateHorizontal(self, escala):
         self.angleAlfa = (self.angleAlfa+escala)%360
         self.camPosition.x  = self.target.x + self.camDistance*sin(self.angleAlfa*pi/180)
         self.camPosition.z  = self.target.z + self.camDistance*cos(self.angleAlfa*pi/180)
-
+        
     def rotateRight(self):
         self.rotateHorizontal(5)
     
